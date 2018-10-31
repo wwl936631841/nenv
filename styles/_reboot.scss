@@ -1,0 +1,29 @@
+@import 'mixins.scss';
+@import 'png-icon.scss';
+body {
+    //overflow-y: scroll;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.el-form-item--nenv {
+    width: 100%;
+}
+
+.el-form--inline {
+    .el-form-item--nenv {
+        width: auto;
+    }
+}
+
+#nenv_root {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}

@@ -1,0 +1,19 @@
+// label 居右对齐后width
+.el-form-item.is-required .el-form-item__label:before {
+    position: static !important;
+}
+
+.el-date-editor.el-input,
+.el-date-editpr.el-input__inner {
+    width: 100%;
+}
+
+.el-cascader,
+.el-select {
+    width: 100%;
+}
+
+.el-dialog {
+    min-width: 400px !important;
+    margin-top: 20vh !important;
+}

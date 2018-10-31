@@ -1,0 +1,72 @@
+#!/usr/bin/env node
+
+const { existsSync } = require('fs')
+const download = require('download')
+const { resolve, join } = require('path')
+const parseArgs = require('minimist')
+const home = require('user-home')
+const { printAndExit } = require('../lib/utils')
+const generate = require('../lib/generate')
+const del = require('del')
+
+const argv = parseArgs(process.argv.slice(2), {
+  alias: {
+    h: 'help',
+    p: 'part'
+  },
+  boolean: ['h'],
+  string: ['p']
+})
+
+if (argv.hrlp) {
+  console.log(`
+    Description
+      update part of you project
+    Usage
+      nenv update -p <part>
+      <part> represent which part you wanto to update
+
+    Options:
+        --part, -p the part of project you want to update
+    you can update -p modules/layouts/packages/all
+  `)
+  process.exit(0)
+}
+
+const dir = resolve(argv._[0] || '.')
+
+const part = argv.part
+
+if (!part) {
+  printAndExit('> Please use -p <part> to specify which part you should update')
+}
+
+const tmp = join(home, '.nenv-templates')
+
+function run () {
+  const officalTempate = 'nenv/nv-template'
+  const parts = part === 'all' ? ['layouts', 'packages', 'modules'] : [part]
+  downloadAndUpdate(officalTempate, parts)
+}
+
+function downloadAndUpdate (template, parts) {
+  if (existsSync(tmp)) del.sync(tmp, { force: true })
+  const downloadUrl = `http://192.168.37.5/${template}/repository/archive.zip?ref=master`
+  download(downloadUrl, tmp, { extract: true, strip: 1, mode: '666', headers: { accept: 'application/zip' } })
+  .then(() => {
+    parts.forEach(part => {
+      console.log(dir, part)
+      del(join(dir, part))
+      generate(parts, join(tmp, part), join(dir, part), err => {
+        if (err) {
+          printAndExit(err)
+        }
+      })
+    })
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+}
+
+run()

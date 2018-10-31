@@ -1,0 +1,19 @@
+@mixin make-icons ($icons, $pseudo: null) {
+    @if $pseudo == null {
+        @each $name, $filename in $icons {
+            &.#{$name} {
+                &:after {
+                    background-image: url(./#{$filename}.png)
+                }
+            }
+        }
+    } @else {
+        @each $name, $filename in $icons {
+            &.#{$name}:#{$pseudo} {
+                &:after {
+                    background-image: url(./#{$filename}.png)
+                }
+            }
+        }
+    }
+}

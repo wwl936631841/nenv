@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" href="<%= htmlWebpackPlugin.options.assetPublicPath + 'static/favicon.ico' %>" >
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" >
+        <meta name = "renderer" content= "webkit">
+        <title><%= htmlWebpackPlugin.options.title %></title>
+    <% htmlWebpackPlugin.files.css.forEach(function(css) { %>
+        <link rel="stylesheet" type="text/css" href="<%= css %>" >
+    <% })%>
+        <script>
+            function checkBrowser () {
+                var ua = navigator.userAgent.toLocaleLowerCase()
+                if (ua.indexOf("compatible") > -1 && ua.indexOf('msie') > -1 && !(ua.indexOf('opera') > -1)) {
+                    var version = /msie([^;]*)/.exec(ua)[1]
+                    version = parseFloat(version)
+                    if (version < 10) {
+                        window.location.href =  "<%= htmlWebpackPlugin.options.assetPublicPath + 'static/compatibility.html' %>"
+                    }
+                }
+            }
+            checkBrowser()
+            window.nenvPageLoaderConfig = [<%= htmlWebpackPlugin.files.js.filter(i => /\/bundles\/pages/.exec(i)).map(i => `"${i}"`)%>]
+            window.nenvPublicPath = "<%= htmlWebpackPlugin.options.assetPublicPath%>"
+        </script>
+    </head>
+    <body>
+        <div id="nenv">
+            <div id="nenv-loading"> </div>
+        </div>
+        <div id="nenv-appended-root"> </div>
+<% htmlWebpackPlugin.files.js.forEach(function(js) { %>
+    <% if(['/main.js', '/commons.js', '/manifest.js', '/bootstrap.js'].indexOf(js.replace(htmlWebpackPlugin.options.assetPublicPath, '/')) > -1) { %>
+        <script type="text/javascript" src="<%= js %>"></script>
+    <% } %>
+<% })%>
+    </body>
+</html>

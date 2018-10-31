@@ -1,0 +1,28 @@
+i.png-icon {
+    display: inline-block;
+    position: relative;
+
+    vertical-align: middle;
+    
+    width: 24px;
+    height: 24px;
+
+    &.small {
+        width: 18px;
+        height: 18px;
+    }
+
+    &.larger {
+        width: 30px;
+        height: 30px;
+    }
+
+    &:after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+}

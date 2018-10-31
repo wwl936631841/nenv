@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+
+const download = require('download')
+const { resolve, join } = require('path')
+const { existsSync, readdirSync } = require('fs')
+const parseArgs = require('minimist')
+const home = require('user-home')
+const { printAndExit } = require('../lib/utils')
+const generate = require('../lib/generate')
+const del = require('del')
+
+const argv = parseArgs(process.argv.slice(2), {
+  alias: {
+    h: 'help',
+    n: 'name'
+  },
+  boolean: ['h'],
+  string: ['n']
+})
+
+if (argv.help) {
+  console.log(`
+    Description
+      Init a nenv project
+    Usage
+      nenv init <dir>
+    <dir> represents where the compile dist folder shoule go.
+
+    Options:
+      --name, -n the name of your project 
+    If no directory is provided, the dist folder will be created in the current directoty.
+  `)
+  process.exit(0)
+}
+
+const dir = resolve(argv._[0] || '.')
+
+const name = argv.name
+
+if (!name) {
+  printAndExit(`> please use -n <name> to config project name`)
+}
+
+// if (!existsSync(dir)) {
+//   printAndExit(`> No such directory exists as the project root: ${dir}`)
+// }
+
+// // (readdirSync(dir))
+// if (readdirSync(dir).length !== 0) {
+//   printAndExit(`> project root: ${dir} is not an empty directory`)
+//   copyFiles(join(__dirname, '../template/static'), dir)
+// }
+
+// function copyFiles (src, dist) {
+
+// }
+
+const tmp = join(home, '.nenv-templates')
+
+function run () {
+  const officailTemplate = 'nenv/nv-template'
+  downloadAndGengerate(officailTemplate)
+}
+
+function downloadAndGengerate (template) {
+  if (existsSync(tmp)) del.sync(tmp, {force: true})
+  const downloadUrl = `http://192.168.37.5/${template}/repository/archive.zip?ref=master`
+  download(downloadUrl, tmp, { extract: true, strip: 1, mode: '666', headers: { accept: 'application/zip' } })
+  .then(() => {
+    generate(name, tmp, join(dir, name), err => {
+      if (err) {
+        printAndExit(err)
+      }
+    })
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+}
+
+run()
